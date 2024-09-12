@@ -24,27 +24,29 @@ func createTable(db *sql.DB) {
 			"price" float,
 			"status" string
 			);`
-	stmt, err := db.Prepare(table)
+	statement, err := db.Prepare(table)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	stmt.Exec()
+	statement.Exec()
 }
 
 func createProduct(db *sql.DB) {
 	insert := `insert into products values("abc","Product Test",0,"disabled")`
-	stmt, err := db.Prepare(insert)
+	statement, err := db.Prepare(insert)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	stmt.Exec()
+	statement.Exec()
 }
 
 func TestProductDb_Get(t *testing.T) {
 	setUp()
 	defer Db.Close()
+
 	productDb := db.NewProductDb(Db)
 	product, err := productDb.Get("abc")
+
 	require.Nil(t, err)
 	require.Equal(t, "Product Test", product.GetName())
 	require.Equal(t, 0.0, product.GetPrice())
@@ -73,5 +75,4 @@ func TestProductDb_Save(t *testing.T) {
 	require.Equal(t, product.Name, productResult.GetName())
 	require.Equal(t, product.Price, productResult.GetPrice())
 	require.Equal(t, product.Status, productResult.GetStatus())
-
 }

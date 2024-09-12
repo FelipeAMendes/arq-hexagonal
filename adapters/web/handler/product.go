@@ -26,106 +26,106 @@ func MakeProductHandlers(r *mux.Router, n *negroni.Negroni, service application.
 }
 
 func getProduct(service application.ProductServiceInterface) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		vars := mux.Vars(r)
+	return http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
+		response.Header().Set("Content-Type", "application/json")
+		vars := mux.Vars(request)
 		id := vars["id"]
 		product, err := service.Get(id)
 		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
+			response.WriteHeader(http.StatusNotFound)
 			return
 		}
-		err = json.NewEncoder(w).Encode(product)
+		err = json.NewEncoder(response).Encode(product)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			response.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 	})
 }
 
 func createProduct(service application.ProductServiceInterface) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
+	return http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
+		response.Header().Set("Content-Type", "application/json")
 		var productDto dto.Product
-		err := json.NewDecoder(r.Body).Decode(&productDto)
+		err := json.NewDecoder(request.Body).Decode(&productDto)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(jsonError(err.Error()))
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write(jsonError(err.Error()))
 			return
 		}
 		product, err := service.Create(productDto.Name, productDto.Price)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(jsonError(err.Error()))
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write(jsonError(err.Error()))
 			return
 		}
-		err = json.NewEncoder(w).Encode(product)
+		err = json.NewEncoder(response).Encode(product)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(jsonError(err.Error()))
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write(jsonError(err.Error()))
 			return
 		}
 	})
 }
 
 func enableProduct(service application.ProductServiceInterface) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		vars := mux.Vars(r)
+	return http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
+		response.Header().Set("Content-Type", "application/json")
+		vars := mux.Vars(request)
 		id := vars["id"]
 		product, err := service.Get(id)
 		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
+			response.WriteHeader(http.StatusNotFound)
 			return
 		}
 		result, err := service.Enable(product)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(jsonError(err.Error()))
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write(jsonError(err.Error()))
 			return
 		}
-		err = json.NewEncoder(w).Encode(result)
+		err = json.NewEncoder(response).Encode(result)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			response.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 	})
 }
 
 func disableProduct(service application.ProductServiceInterface) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		vars := mux.Vars(r)
+	return http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
+		response.Header().Set("Content-Type", "application/json")
+		vars := mux.Vars(request)
 		id := vars["id"]
 		product, err := service.Get(id)
 		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
+			response.WriteHeader(http.StatusNotFound)
 			return
 		}
 
 		var productDto dto.Product
-		err = json.NewDecoder(r.Body).Decode(&productDto)
+		err = json.NewDecoder(request.Body).Decode(&productDto)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(jsonError(err.Error()))
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write(jsonError(err.Error()))
 			return
 		}
 		err = product.ChangePrice(productDto.Price)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(jsonError(err.Error()))
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write(jsonError(err.Error()))
 			return
 		}
 
 		result, err := service.Disable(product)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(jsonError(err.Error()))
+			response.WriteHeader(http.StatusInternalServerError)
+			response.Write(jsonError(err.Error()))
 			return
 		}
-		err = json.NewEncoder(w).Encode(result)
+		err = json.NewEncoder(response).Encode(result)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			response.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 	})

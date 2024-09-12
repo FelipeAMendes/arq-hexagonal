@@ -8,9 +8,9 @@ func jsonError(msg string) []byte {
 	}{
 		msg,
 	}
-	r, err := json.Marshal(error)
+	result, err := json.Marshal(error)
 	if err != nil {
 		return []byte(err.Error())
 	}
-	return r
+	return result
 }
